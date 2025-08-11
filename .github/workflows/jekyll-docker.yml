@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SMART ONE - Streaming e Planos</title>
+  
+  <!-- Fonte Moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      padding: 120px 20px 60px;
+      text-align: center;
+      position: relative;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+      color: #ffcc00;
+      font-weight: 800;
+      font-size: 3rem;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+      user-select: none;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 0;
+    }
+    header h1 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+    }
+
+    /* User Info top-right */
+    .user-info {
+      position: fixed;
+      top: 12px;
+      right: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 15px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #ffcc00;
+      z-index: 9999;
+      user-select: none;
+      max-width: 200px;
+      box-shadow: 0 0 10px #ffcc0040;
+    }
+    .user-info span {
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
+    .btn-logout {
+      background: #ff9800;
+      border: none;
+      border-radius: 16px;
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+      width: 100%;
+      text-align: center;
+    }
+    .btn-logout:hover {
+      background: #ffa726;
+    }
+
+    /* Intro */
+    .intro {
+      text-align: center;
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 800px;
+      user-select: none;
+    }
+    .intro h2 {
+      font-size: 2rem;
+      color: #ffcc00;
+      margin-bottom: 8px;
+    }
+    .intro p {
+      font-size: 1.1rem;
+      color: #e0e0e0;
+    }
+
+    /* Carousel Section */
+    .carousel-section {
+      padding: 40px 20px;
+      width: 100%;
+      max-width: 900px;
+      user-select: none;
+    }
+    .carousel-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: #ffcc00;
+    }
+    .carousel {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .carousel-item {
+      flex: 0 0 auto;
+      width: 180px;
+      scroll-snap-align: start;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease;
+      background: #222;
+    }
+    .carousel-item:hover {
+      transform: scale(1.05);
+    }
+    .carousel-item img {
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+
+    /* Planos */
+    .planos {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px 20px;
+      background: rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 900px;
+      user-select: none;
+    }
+    .plano {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      width: 300px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      position: relative;
+      color: white;
+    }
+    .plano h2 {
+      color: #ffcc00;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    .preco {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #00e0ff;
+      margin: 8px 0 12px;
+    }
+    .descricao {
+      font-size: 1rem;
+      color: #ccc;
+      margin-bottom: 15px;
+    }
+    .input-nome {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      text-align: center;
+      user-select: text;
+    }
+    .botao-pix, .botao-assinar {
+      background: #ff9800;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 25px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      user-select: none;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    .botao-pix:hover, .botao-assinar:hover {
+      background: #ffa726;
+    }
+    .pix-area {
+      margin-top: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      color: #fff;
+      user-select: text;
+      display: none;
+    }
+    .pix-key {
+      font-family: monospace;
+      font-size: 0.9rem;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      user-select: all;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .pix-qr {
+      max-width: 180px;
+      margin: 0 auto 10px;
+      display: block;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00e0ffaa;
+    }
+
+    /* Botão WhatsApp Flutuante */
+    .whatsapp-btn-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25d366;
+      color: white;
+      padding: 12px 14px;
+      border-radius: 50%;
+      font-size: 1.8rem;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 999;
+      user-select: none;
+    }
+
+    /* Login Section */
+    #loginSection {
+      padding: 40px 20px;
+      max-width: 400px;
+      margin: 0 auto 40px;
+      width: 100%;
+      user-select: none;
+    }
+    #loginSection h2 {
+      color: #ffcc00;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    #loginSection input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    #loginSection button {
+      width: 100%;
+      background: #ff9800;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+    #loginSection button:hover {
+      background: #ffa726;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      .carousel-item { width: 140px; }
+      .planos {
+        flex-direction: column;
+        align-items: center;
+      }
+      .plano { width: 90%; max-width: 340px; }
+      .user-info {
+        position: static;
+        margin: 15px auto 0;
+        flex-direction: row;
+        gap: 10px;
+        max-width: none;
+        padding: 6px 12px;
+        border-radius: 25px;
+        font-size: 1rem;
+      }
+      .btn-logout {
+        width: auto;
+        padding: 6px 14px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SMART ONE</h1>
+</header>
+
+<div class="user-info" id="userInfo" aria-live="polite" aria-atomic="true" style="display:none;">
+  <span id="userName">👤 Usuário</span>
+  <button class="btn-logout" onclick="logout()">Sair</button>
+</div>
+
+<section class="intro">
+  <h2>🍿 Filmes, Séries e Canais ao Vivo!</h2>
+  <p>O melhor do entretenimento na sua tela.</p>
+</section>
+
+<section class="carousel-section">
+  <h2>Em Destaque</h2>
+  <div class="carousel" id="carousel" aria-label="Carrossel de filmes em destaque">
+    <div class="carousel-item"><img src="https://i.ibb.co/jvgMgmst/a396d4f6-5dc4-4eca-a40e-18bcc52abe05.webp" alt="Filme 1" /></div>
+    <div class="carousel-item"><img src="https://i.ibb.co/yFcvXv34/16500-medio.jpg" alt="Filme 2" /></div>
+    <div class="carousel-item"><img src="https://i.ibb.co/v4xQTzRk/6b185129-45c5-4acf-8cc1-3a232ec97535.webp" alt="Filme 3" /></div>
+    <div class="carousel-item"><img src="https://i.ibb.co/h1Y7ShqY/12fe7bf7-334c-450b-b0d2-b61515bf7547.webp" alt="Filme 4" /></div>
+    <div class="carousel-item"><img src="https://i.ibb.co/p63j9XK7/0cc48799-8448-4f54-9620-39b3b9c7aa20.webp" alt="Filme 5" /></div>
+    <div class="carousel-item">
+      <a href="https://seulink.com/filme6" target="_blank" rel="noopener">
+        <img src="https://i.ibb.co/Rk5ckky6/16108-medio-1740594892.jpg" alt="Filme 6" />
+      </a>
+    </div>
+    <div class="carousel-item">
+      <a href="https://seulink.com/filme7" target="_blank" rel="noopener">
+        <img src="https://i.ibb.co/zWmmBFjS/89a43f9e-2a94-4271-a698-d6ddfb7c7908.webp" alt="Filme 7" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="planos" id="planosSection" style="display:none;" aria-label="Planos disponíveis para assinatura">
+  
+  <div class="plano" data-plano="Plano Mensal" data-valor="39.90">
+    <h2>Plano Mensal</h2>
+    <div class="preco">R$ 39,90</div>
+    <div class="descricao">Acesso ilimitado por 30 dias.</div>
+    <input type="text" class="input-nome" placeholder="Seu nome" />
+    <button class="botao-assinar" onclick="assinarPlano(this)">📲 Assinar</button>
+    <button class="botao-pix" onclick="mostrarPix(this)">💳 Pagar via PIX</button>
+    <div class="pix-area" aria-hidden="true">
+      <div class="pix-key" onclick="copiarPix(this)">02028910542</div>
+      <img class="pix-qr" alt="QR Code PIX" />
+      <small>Clique na chave para copiar</small>
+    </div>
+  </div>
+
+  <div class="plano" data-plano="Plano Trimestral" data-valor="99.90">
+    <h2>Plano Trimestral</h2>
+    <div class="preco">R$ 99,90</div>
+    <div class="descricao">3 meses de acesso com suporte VIP.</div>
+    <input type="text" class="input-nome" placeholder="Seu nome" />
+    <button class="botao-assinar" onclick="assinarPlano(this)">📲 Assinar</button>
+    <button class="botao-pix" onclick="mostrarPix(this)">💳 Pagar via PIX</button>
+    <div class="pix-area" aria-hidden="true">
+      <div class="pix-key" onclick="copiarPix(this)">02028910542</div>
+      <img class="pix-qr" alt="QR Code PIX" />
+      <small>Clique na chave para copiar</small>
+    </div>
+  </div>
+
+  <div class="plano" data-plano="Plano Semestral" data-valor="197.40">
+    <h2>Plano Semestral</h2>
+    <div class="preco">R$ 197,40</div>
+    <div class="descricao">6 meses de acesso com economia garantida.</div>
+    <input type="text" class="input-nome" placeholder="Seu nome" />
+    <button class="botao-assinar" onclick="assinarPlano(this)">📲 Assinar</button>
+    <button class="botao-pix" onclick="mostrarPix(this)">💳 Pagar via PIX</button>
+    <div class="pix-area" aria-hidden="true">
+      <div class="pix-key" onclick="copiarPix(this)">02028910542</div>
+      <img class="pix-qr" alt="QR Code PIX" />
+      <small>Clique na chave para copiar</small>
+    </div>
+  </div>
+
+  <div class="plano" data-plano="Plano Anual" data-valor="299.90">
+    <h2>Plano Anual</h2>
+    <div class="preco">R$ 299,90</div>
+    <div class="descricao">12 meses de diversão garantida.</div>
+    <input type="text" class="input-nome" placeholder="Seu nome" />
+    <button class="botao-assinar" onclick="assinarPlano(this)">📲 Assinar</button>
+    <button class="botao-pix" onclick="mostrarPix(this)">💳 Pagar via PIX</button>
+    <div class="pix-area" aria-hidden="true">
+      <div class="pix-key" onclick="copiarPix(this)">02028910542</div>
+      <img class="pix-qr" alt="QR Code PIX" />
+      <small>Clique na chave para copiar</small>
+    </div>
+  </div>
+
+</div>
+
+<!-- Botão WhatsApp flutuante -->
+<a href="https://wa.me/+5514996155040" target="_blank" class="whatsapp-btn-float" rel="noopener" aria-label="Contato via WhatsApp">💬</a>
+
+<!-- Login Section -->
+<section id="loginSection" aria-label="Login ou cadastro" style="padding: 40px 20px; max-width: 400px; margin: 0 auto;">
+  <h2>Login / Cadastro</h2>
+  <input type="text" id="inputUsername" placeholder="Nome de usuário" aria-label="Nome de usuário" />
+  <input type="password" id="inputPassword" placeholder="Senha" aria-label="Senha" />
+  <button onclick="login()">Entrar / Registrar</button>
+</section>
+
+<script>
+  // Mostrar/ocultar área PIX com QR code dinâmico
+  function mostrarPix(botao) {
+    const plano = botao.closest('.plano');
+    const pixArea = plano.querySelector('.pix-area');
+    const pixImg = pixArea.querySelector('.pix-qr');
+    const chavePix = "02028910542";
+    const valor = plano.getAttribute('data-valor');
+
+    // Construir URL para QR Code PIX via gerarqrcodepix.com.br
+    const qrUrl = `https://gerarqrcodepix.com.br/api/qr_code?chave=${chavePix}&valor=${valor}&titulo=SMART%20ONE&cor=000000&formato=png`;
+    pixImg.src = qrUrl;
+
+    // Mostrar a área PIX e esconder as outras
+    document.querySelectorAll('.pix-area').forEach(area => {
+      area.style.display = "none";
+      area.setAttribute('aria-hidden', 'true');
+    });
+    pixArea.style.display = "block";
+    pixArea.setAttribute('aria-hidden', 'false');
+  }
+
+  // Copiar chave Pix ao clicar na chave
+  function copiarPix(element) {
+    let chave = element.textContent.trim();
+    navigator.clipboard.writeText(chave).then(() => {
+      alert("Chave PIX copiada: " + chave);
+    }).catch(() => {
+      alert("Não foi possível copiar a chave PIX.");
+    });
+  }
+
+  // Abrir WhatsApp para assinatura com mensagem personalizada
+  const numeroWhatsApp = "+5514996155040";
+  function assinarPlano(botao) {
+    const plano = botao.closest('.plano');
+    const nomePlano = plano.getAttribute('data-plano');
+    const inputNome = plano.querySelector('.input-nome');
+    const nomeCliente = inputNome.value.trim();
+    if (!nomeCliente) {
+      alert('Por favor, digite seu nome para prosseguir com a assinatura.');
+      inputNome.focus();
+      return;
+    }
+    const msg = `Olá, meu nome é ${nomeCliente} e quero assinar o ${nomePlano}.`;
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  }
+
+  // Simples sistema de login fake para demonstrar nome de usuário no topo
+  function login() {
+    const user = document.getElementById('inputUsername').value.trim();
+    const pass = document.getElementById('inputPassword').value.trim();
+    if (!user || !pass) {
+      alert('Preencha usuário e senha');
+      return;
+    }
+    // Para demo: salvar no localStorage
+    localStorage.setItem('smartone_user', user);
+    mostrarUser();
+    alert(`Bem vindo, ${user}!`);
+    // Esconder login, mostrar planos
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('planosSection').style.display = 'flex';
+  }
+
+  function logout() {
+    localStorage.removeItem('smartone_user');
+    document.getElementById('userInfo').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('planosSection').style.display = 'none';
+  }
+
+  function mostrarUser() {
+    const user = localStorage.getItem('smartone_user');
+    const userInfo = document.getElementById('userInfo');
+    if (user) {
+      userInfo.style.display = 'flex';
+      document.getElementById('userName').textContent = `👤 ${user}`;
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('planosSection').style.display = 'flex';
+    } else {
+      userInfo.style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
+      document.getElementById('planosSection').style.display = 'none';
+    }
+  }
+
+  // Executar ao carregar página
+  window.onload = mostrarUser;
+
+</script>
+
+</body>
+</html>
